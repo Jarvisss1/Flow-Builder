@@ -102,9 +102,9 @@ export function NodeInspector() {
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full w-full">
       {/* Header */}
-      <div className="px-4 py-3 border-b border-border flex items-center justify-between bg-muted/30">
+      <div className="flex-none px-4 py-3 border-b border-border flex items-center justify-between bg-muted/30">
         <div className="flex items-center gap-2">
           <Server className="h-4 w-4 text-muted-foreground" />
           <span className="font-medium text-sm">Service Inspector</span>
@@ -115,43 +115,44 @@ export function NodeInspector() {
         </Button>
       </div>
 
-      {/* Basic Info */}
-      <div className="p-4 space-y-4">
-        <div className="space-y-2">
-          <Label className="text-xs text-muted-foreground">Status</Label>
-          <div>
-            <Badge className={`${getStatusColor(data.status)} text-white capitalize`}>
-              {data.status}
-            </Badge>
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto min-h-0">
+        {/* Basic Info */}
+        <div className="p-4 space-y-4">
+          <div className="space-y-2">
+            <Label className="text-xs text-muted-foreground">Status</Label>
+            <div>
+              <Badge className={`${getStatusColor(data.status)} text-white capitalize`}>
+                {data.status}
+              </Badge>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="node-name">Service Name</Label>
+            <Input 
+              id="node-name" 
+              value={name} 
+              onChange={(e) => handleNameChange(e.target.value)} 
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="node-desc">Description</Label>
+            <Textarea 
+              id="node-desc"
+              placeholder="Describe the service responsibility..."
+              className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              value={description}
+              onChange={(e) => handleDescriptionChange(e.target.value)}
+            />
           </div>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="node-name">Service Name</Label>
-          <Input 
-            id="node-name" 
-            value={name} 
-            onChange={(e) => handleNameChange(e.target.value)} 
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="node-desc">Description</Label>
-          <Textarea 
-            id="node-desc"
-            placeholder="Describe the service responsibility..."
-            className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-            value={description}
-            onChange={(e) => handleDescriptionChange(e.target.value)}
-          />
-        </div>
-      </div>
-
-      {/* Tabs */}
-      <div className="flex-1 flex flex-col min-h-0">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-          <div className="px-4 border-b border-border">
-            <TabsList className="w-full justify-start rounded-none border-b-0 p-0 h-auto bg-transparent">
+        {/* Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <div className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-y border-border px-4">
+             <TabsList className="w-full justify-start rounded-none border-b-0 p-0 h-auto bg-transparent">
               <TabsTrigger 
                 value="config" 
                 className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2"
@@ -167,8 +168,8 @@ export function NodeInspector() {
             </TabsList>
           </div>
 
-          <div className="flex-1 overflow-y-auto bg-muted/10">
-            <TabsContent value="config" className="p-4 space-y-6 m-0">
+          <div className="p-4 bg-muted/10 min-h-[200px]">
+            <TabsContent value="config" className="space-y-6 m-0">
               {/* Synced Controls */}
               <div className="space-y-4 p-4 rounded-lg border border-border bg-background">
                 <div className="flex items-center justify-between">
@@ -206,7 +207,7 @@ export function NodeInspector() {
                </div>
             </TabsContent>
 
-            <TabsContent value="runtime" className="p-4 space-y-4 m-0">
+            <TabsContent value="runtime" className="space-y-4 m-0">
               <div className="grid grid-cols-2 gap-4">
                  <div className="p-3 bg-background border rounded-md">
                     <div className="flex items-center gap-2 text-muted-foreground mb-1">
@@ -229,7 +230,7 @@ export function NodeInspector() {
       </div>
 
       {/* Footer */}
-      <div className="p-4 border-t border-border bg-background">
+      <div className="flex-none p-4 border-t border-border bg-background">
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button variant="destructive" className="w-full">
