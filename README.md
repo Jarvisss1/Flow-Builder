@@ -29,9 +29,9 @@ It's pretty standard stuff. First, make sure you have Node installed.
 ## Known Limitations
 
 -   **No Persistence:** Since there's no real database, if you refresh the page, any new nodes you added will disappear. It resets to the default mock data.
--   **Mobile Layout:** It works *okay* on mobile (I hid the big inspector panel), but it's really meant to be used on a desktop. The graph gets a bit cramped on small screens.
+-   **Mobile Layout:** It works *okay* on mobile (I hid the big inspector panel, it shows as pop up sidebar in mobile), but it's really meant to be used on a desktop. The graph gets a bit cramped on small screens.
 -   **Random Positioning:** When you add a new node, it just pops up in a random spot. You have to drag it where you want it manually.
--   **Mock Data:** Accessing `app-3` (Payment Gateway) relies on hardcoded data in the handler file.
+
 
 ## Features I Added
 -   You can add new Service or Database nodes.

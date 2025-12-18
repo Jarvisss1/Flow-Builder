@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { type Node, type Edge, type Connection, type OnNodesChange, type OnEdgesChange, addEdge, applyNodeChanges, applyEdgeChanges, useReactFlow, ReactFlow, Background, useNodesState, useEdgesState, BackgroundVariant, Panel } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
 import { useAppStore } from '@/store/useAppStore';
-import { useGraph } from '@/hooks/useQueries';
+import { useGraph, useUpdateGraph } from '@/hooks/useQueries';
+import { type ServiceNodeData } from '@/api/mockApi';
 import { Loader2, Plus, Minus, Maximize } from 'lucide-react';
 import { ServiceNode } from './ServiceNode';
 import { Button } from '@/components/ui/button';
@@ -33,14 +34,19 @@ export function FlowCanvas() {
   const { fitView } = useReactFlow();
 
   // Sync with query data
+  const lastAppIdRef = useRef<string | null>(null);
+
   useEffect(() => {
-    if (graphData) {
-      setNodes(graphData.nodes);
-      setEdges(graphData.edges);
-      // Fit view after a tick to allow rendering
-      setTimeout(() => fitView({ padding: 0.2 }), 50);
-    } // Removed else block to prevent clearing on every re-render or loading state
-  }, [graphData, setNodes, setEdges, fitView]);
+    if (graphData && selectedAppId) {
+      if (lastAppIdRef.current !== selectedAppId) {
+        setNodes(graphData.nodes);
+        setEdges(graphData.edges);
+        // Fit view after a tick to allow rendering
+        setTimeout(() => fitView({ padding: 0.2 }), 50);
+        lastAppIdRef.current = selectedAppId;
+      }
+    } 
+  }, [graphData, selectedAppId, setNodes, setEdges, fitView]);
 
   const onNodesChange: OnNodesChange = useCallback(
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
@@ -91,6 +97,9 @@ export function FlowCanvas() {
   
   // Re-implementing shortcuts properly with full access
   const { zoomIn, zoomOut } = useReactFlow();
+
+  // Auto-Save Integration
+  useAutoSave(selectedAppId, nodes, edges, !!graphData && !isLoading);
 
     useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -196,6 +205,27 @@ export function FlowCanvas() {
       </div>
     </div>
   );
+}
+
+// Helper hook for auto-saving
+function useAutoSave(
+    appId: string | null, 
+    nodes: Node[], 
+    edges: Edge[], 
+    isLoaded: boolean
+) {
+    const { mutate } = useUpdateGraph();
+    
+    useEffect(() => {
+        if (!isLoaded || !appId) return;
+
+        // Debounce save operation
+        const handler = setTimeout(() => {
+            mutate({ appId, data: { nodes: nodes as Node<ServiceNodeData>[], edges } });
+        }, 1000); 
+
+        return () => clearTimeout(handler);
+    }, [nodes, edges, isLoaded, appId, mutate]);
 }
 
 function CustomControls() {

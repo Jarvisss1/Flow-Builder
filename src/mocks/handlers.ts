@@ -162,4 +162,17 @@ export const handlers = [
 
         return new HttpResponse(null, { status: 404 });
     }),
+
+    http.put<{ appId: string }, { nodes: Node<ServiceNodeData>[]; edges: Edge[] }>('/apps/:appId/graph', async ({ params, request }) => {
+        await delay(500);
+        const { appId } = params;
+        const body = await request.json();
+
+        if (GRAPHS[appId]) {
+            GRAPHS[appId] = body;
+            return HttpResponse.json(body);
+        }
+
+        return new HttpResponse(null, { status: 404 });
+    }),
 ]
