@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { type Node, type Edge, type Connection, type OnNodesChange, type OnEdgesChange, addEdge, applyNodeChanges, applyEdgeChanges, useReactFlow, ReactFlow, Background, Controls, useNodesState, useEdgesState, BackgroundVariant, Panel } from '@xyflow/react';
+import { type Node, type Edge, type Connection, type OnNodesChange, type OnEdgesChange, addEdge, applyNodeChanges, applyEdgeChanges, useReactFlow, ReactFlow, Background, useNodesState, useEdgesState, BackgroundVariant, Panel } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
 import { useAppStore } from '@/store/useAppStore';
@@ -87,28 +87,7 @@ export function FlowCanvas() {
   const isInspectorOpen = useAppStore((state) => state.isInspectorOpen);
   const setInspectorOpen = useAppStore((state) => state.actions.setInspectorOpen);
 
-  // Keyboard Shortcuts
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Fit View: Shift + F
-      if (e.shiftKey && e.code === 'KeyF') {
-        e.preventDefault();
-        fitView({ padding: 0.2 });
-      }
-      
-      // Zoom In: Ctrl + Plus / Equal
-      if ((e.ctrlKey || e.metaKey) && (e.code === 'Equal' || e.code === 'NumpadAdd')) {
-          e.preventDefault();
-          useReactFlow().zoomIn(); // Wait, specific hook needed inside component or instance usage
-          // Actually, we can use the instance from useReactFlow() but 'zoomIn' is available on the instance.
-          // However, we are inside a component inside ReactFlowProvider (App.tsx), so useReactFlow works.
-          // But I already destructured fitView. I need the whole instance or just zoomIn/zoomOut.
-      }
-      // I will handle Zoom shortcuts in the separate useEffect for cleaner code or just rely on default ReactFlow behavior?
-      // ReactFlow has default zoom behaviors (scroll). Explicit keyboard shortcuts for zoom are good too.
-      // Let's implement them properly below.
-    };
-  }, [fitView]);
+
   
   // Re-implementing shortcuts properly with full access
   const { zoomIn, zoomOut } = useReactFlow();
