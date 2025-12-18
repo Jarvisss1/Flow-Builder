@@ -4,9 +4,15 @@ import { Input } from '@/components/ui/input';
 import { useTheme } from '@/components/theme-provider';
 import { useAppStore } from '@/store/useAppStore';
 
+import { useApps } from '@/hooks/useQueries';
+
 export function TopBar() {
   const { setTheme, theme } = useTheme();
   const setMobilePanelOpen = useAppStore((state) => state.actions.setMobilePanelOpen);
+  const selectedAppId = useAppStore((state) => state.selectedAppId);
+  const { data: apps } = useApps();
+
+  const selectedApp = apps?.find(app => app.id === selectedAppId);
 
   return (
     <header className="h-16 border-b border-border bg-background flex items-center justify-between px-4 shrink-0 z-10">
@@ -20,7 +26,15 @@ export function TopBar() {
           <FolderKanban className="h-5 w-5" />
           <span className="sr-only">Open Apps</span>
         </Button>
-        <div className="font-bold text-xl tracking-tight text-primary hidden sm:block">FlowBuilder</div>
+        <div className="flex items-center gap-2">
+          <div className="font-bold text-xl tracking-tight text-primary hidden sm:block">FlowBuilder</div>
+          {selectedApp && (
+            <>
+              <span className="text-muted-foreground hidden sm:inline">/</span>
+              <span className="font-medium text-foreground text-sm sm:text-base truncate max-w-[200px]">{selectedApp.name}</span>
+            </>
+          )}
+        </div>
         <div className="hidden md:flex relative w-64">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input 
