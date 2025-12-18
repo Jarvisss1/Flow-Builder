@@ -1,73 +1,42 @@
-# React + TypeScript + Vite
+# FlowBuilder Project
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Hey! This is a project I built to visualize service architectures using graphs. It's basically a dashboard where you can see how different microservices (servers, databases, etc.) connect to each other.
 
-Currently, two official plugins are available:
+## How to Run It
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+It's pretty standard stuff. First, make sure you have Node installed.
 
-## React Compiler
+1.  Clone the repo (if you haven't already).
+2.  Install the dependencies:
+    ```bash
+    npm install
+    ```
+3.  Start the dev server:
+    ```bash
+    npm run dev
+    ```
+4.  Open `http://localhost:5173` in your browser.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+> Note: I'm using Mock Service Worker (MSW) to fake the backend, so you don't need to run a separate server API. The data is all mocked in the browser.
 
-## Expanding the ESLint configuration
+## Key Decisions
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+-   **React Flow:** I picked this library because it handles all the heavy lifting for the graph interaction (dragging nodes, zooming, connecting edges). Writing that from scratch would have been a nightmare.
+-   **Shadcn/UI & Tailwind:** Used these for the UI components. I really wanted it to look premium and "clean" without writing a ton of custom CSS. Plus, it has dark mode support out of the box!
+-   **Zustand:** For state management (like tracking the selected node or if the inspector is open). It's way simpler than Redux and gets the job done.
+-   **React Query:** Even though it's mocked data right now, I set it up with React Query so that later if we add a real backend, the caching and loading states are already handled.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Known Limitations
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+-   **No Persistence:** Since there's no real database, if you refresh the page, any new nodes you added will disappear. It resets to the default mock data.
+-   **Mobile Layout:** It works *okay* on mobile (I hid the big inspector panel), but it's really meant to be used on a desktop. The graph gets a bit cramped on small screens.
+-   **Random Positioning:** When you add a new node, it just pops up in a random spot. You have to drag it where you want it manually.
+-   **Mock Data:** Accessing `app-3` (Payment Gateway) relies on hardcoded data in the handler file.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Features I Added
+-   You can add new Service or Database nodes.
+-   Keyboard shortcuts! `Shift + F` to fit the view, and `Ctrl +/-` to zoom.
+-   There's a cool "Simulate Error" switch to see how the app handles network failures.
+-   You can edit the service name and description in the side panel, and it saves automatically (with a little debounce delay so it doesn't lag).
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Let me know if you find any bugs!
